@@ -67,7 +67,7 @@ class DIDSchema(OpenAPISchema):
         description="Key type associated with the DID",
         example=KeyType.ED25519.key_type,
         validate=validate.OneOf(
-            [KeyType.ED25519.key_type, KeyType.BLS12381G2.key_type]
+            [KeyType.ED25519.key_type, KeyType.BLS12381G2.key_type, KeyType.SECP256k1.key_type]
         ),
     )
 
@@ -131,14 +131,14 @@ class DIDListQueryStringSchema(OpenAPISchema):
     method = fields.Str(
         required=False,
         example=DIDMethod.KEY.method_name,
-        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name]),
+        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name, DIDMethod.ADA.method_name]),
         description="DID method to query for. e.g. sov to only fetch indy/sov DIDs",
     )
     key_type = fields.Str(
         required=False,
         example=KeyType.ED25519.key_type,
         validate=validate.OneOf(
-            [KeyType.ED25519.key_type, KeyType.BLS12381G2.key_type]
+            [KeyType.ED25519.key_type, KeyType.BLS12381G2.key_type, KeyType.SECP256k1.key_type]
         ),
         description="Key type to query for.",
     )
@@ -157,7 +157,7 @@ class DIDCreateOptionsSchema(OpenAPISchema):
         required=True,
         example=KeyType.ED25519.key_type,
         validate=validate.OneOf(
-            [KeyType.ED25519.key_type, KeyType.BLS12381G2.key_type]
+            [KeyType.ED25519.key_type, KeyType.BLS12381G2.key_type, KeyType.SECP256k1.key_type]
         ),
     )
 

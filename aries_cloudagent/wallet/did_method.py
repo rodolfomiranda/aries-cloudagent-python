@@ -27,6 +27,12 @@ class DIDMethod(Enum):
         supported_key_types=[KeyType.ED25519, KeyType.BLS12381G2],
         supports_rotation=False,
     )
+    # support only ed25519 and no key rotation
+    ADA = DIDMethodSpec(
+        method_name="ada",
+        supported_key_types=[KeyType.SECP256k1],
+        supports_rotation=True,
+    )
 
     @property
     def method_name(self) -> str:

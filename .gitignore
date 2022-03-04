@@ -189,3 +189,9 @@ _build/
 
 # Open API build
 open-api/.build
+
+# My private notes
+my_private_notes.md
+
+# Node modules
+node_modules

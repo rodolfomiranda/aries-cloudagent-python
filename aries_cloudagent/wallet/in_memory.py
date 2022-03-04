@@ -1,6 +1,8 @@
 """In-memory implementation of BaseWallet interface."""
 
 import asyncio
+import codecs
+import subprocess
 from typing import List, Sequence, Tuple, Union
 
 from ..core.in_memory import InMemoryProfile
@@ -21,6 +23,7 @@ from .did_method import DIDMethod
 from .error import WalletError, WalletDuplicateError, WalletNotFoundError
 from .key_type import KeyType
 from .util import b58_to_bytes, bytes_to_b58, random_seed
+
 
 
 class InMemoryWallet(BaseWallet):
@@ -231,6 +234,17 @@ class InMemoryWallet(BaseWallet):
         elif method == DIDMethod.SOV:
             if not did:
                 did = bytes_to_b58(verkey[:16])
+        elif method == DIDMethod.ADA:
+            if did:
+                raise WalletError("Not allowed to set DID for DID method 'ada'")
+            # TODO move to file
+            x = codecs.encode(codecs.decode(verkey[:64], 'hex'), 'base64').decode()[:43]
+            y = codecs.encode(codecs.decode(verkey[64:], 'hex'), 'base64').decode()[:43]
+
+            try:
+                did = subprocess.check_output(["node", "create.js", x, y]).decode('utf-8')[:-1]
+            except subprocess.CalledProcessError as e:
+                print(e.output)
         else:
             raise WalletError(f"Unsupported DID method: {method.method_name}")
 

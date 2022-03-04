@@ -8,6 +8,30 @@
 
 > An easy to use Aries agent for building SSI services using any language that supports sending/receiving HTTP requests.
 
+## About this fork of ACA-Py
+The purpose of this fork is to adapt ACA-Py to work with sidetree-cardano methods. It's part of my Catalyst project.
+
+This is the list of addons that this fork provides:
+* Add support  did:ada method
+* Add support for SECP256K1 signatures
+* In Memory wallet support for sidetree cardano:
+  * create did:ada
+  * update did:ada documment
+  * rotate keys
+  *  Note 1: DID documment are stored as metadata
+  *  Note 2: sidetree update and recovery keys were merged into one
+
+A DEMO was added to produce the following actions:
+* Create did:ada and store in ledger and wallet
+* Ceate an out of band invitation to other agent
+* Establish connection between two agents
+* Basic messaging between agents
+* Request a credential on did:ada
+* Request proof on did:ada
+* Issue a credential on did:ada
+
+
+
 ## Overview
 
 Hyperledger Aries Cloud Agent Python (ACA-Py) is a foundation for building Verifiable Credential (VC) ecosystems. It operates in the second and third layers of the [Trust Over IP framework (PDF)](https://trustoverip.org/wp-content/uploads/sites/98/2020/05/toip_050520_primer.pdf) using [DIDComm messaging](https://github.com/hyperledger/aries-rfcs/tree/main/concepts/0005-didcomm) and [Hyperledger Aries](https://www.hyperledger.org/use/aries) protocols. The "cloud" in the name means that ACA-Py runs on servers (cloud, enterprise, IoT devices, and so forth), and is not designed to run on mobile devices.

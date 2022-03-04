@@ -37,3 +37,9 @@ async def setup(context: InjectionContext):
     ).provide(context.settings, context.injector)
     await web_resolver.setup(context)
     registry.register(web_resolver)
+    
+    ada_resolver = ClassProvider(
+        "aries_cloudagent.resolver.default.sidetree-cardano.AdaDIDResolver"
+    ).provide(context.settings, context.injector)
+    await ada_resolver.setup(context)
+    registry.register(ada_resolver)

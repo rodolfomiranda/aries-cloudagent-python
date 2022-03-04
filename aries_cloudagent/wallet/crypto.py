@@ -9,6 +9,9 @@ import nacl.bindings
 import nacl.exceptions
 import nacl.utils
 
+import ecdsa
+from ecdsa.util import randrange_from_seed__trytryagain
+
 from marshmallow import ValidationError
 
 from ..utils.jwe import JweRecipient, b64url, JweEnvelope, from_b64url
@@ -44,6 +47,8 @@ def create_keypair(key_type: KeyType, seed: bytes = None) -> Tuple[bytes, bytes]
         # This ensures python won't crash if bbs is not installed and not used
 
         return create_bls12381g2_keypair(seed)
+    elif key_type == KeyType.SECP256k1:
+        return create_secp256k1_keypair(seed)
     else:
         raise WalletError(f"Unsupported key type: {key_type.key_type}")
 
@@ -64,6 +69,23 @@ def create_ed25519_keypair(seed: bytes = None) -> Tuple[bytes, bytes]:
     pk, sk = nacl.bindings.crypto_sign_seed_keypair(seed)
     return pk, sk
 
+def create_secp256k1_keypair(seed: bytes = None) -> Tuple[bytes, bytes]:
+    """
+    Create a public and private secp256k1 keypair from a seed value.
+
+    Args:
+        seed: Seed for keypair
+
+    Returns:
+        A tuple of (public key, secret key)
+
+    """
+    if not seed:
+        seed = random_seed()   
+    secexp = randrange_from_seed__trytryagain(seed,ecdsa.SECP256k1.order)
+    sk = ecdsa.SigningKey.from_secret_exponent(secexp, curve=ecdsa.SECP256k1)  
+    pk = sk.get_verifying_key()
+    return pk.to_string().hex(), sk.to_string().hex()
 
 def seed_to_did(seed: str) -> str:
     """

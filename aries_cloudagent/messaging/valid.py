@@ -265,6 +265,18 @@ class DIDWeb(Regexp):
         super().__init__(
             DIDWeb.PATTERN, error="Value {input} is not in W3C did:web format"
         )
+class DIDAda(Regexp):
+    """Validate value against did:ada specification."""
+
+    EXAMPLE = "did:ada:addr1vxvxvxvxv"
+    PATTERN = re.compile(r"^(did:ada:)([a-zA-Z0-9%._-]*:)*[a-zA-Z0-9%._-]+$")
+
+    def __init__(self):
+        """Initializer."""
+
+        super().__init__(
+            DIDAda.PATTERN, error="Value {input} is not in  did:ada format"
+        )
 
 
 class DIDPosture(OneOf):
