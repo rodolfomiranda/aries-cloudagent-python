@@ -9,19 +9,22 @@
 > An easy to use Aries agent for building SSI services using any language that supports sending/receiving HTTP requests.
 
 ## About this fork of ACA-Py
-The purpose of this fork is to adapt ACA-Py to work with sidetree-cardano methods. It's part of my Catalyst project.
+The purpose of this fork is to adapt ACA-Py to work with sidetree-cardano methods.
+This development is part of my proposal [Interoperability as Growth Driver](https://cardano.ideascale.com/a/dtd/Interoperability-as-growth-driver/368705-48088) submitted to Project Catalyst Fund 6  that finally  **got funded**. Thanks for voting!!! See the [list](https://github.com/rodolfomiranda/sidetree-cardano/wiki/Project-Catalyst-Proposals) of my new proposals for Fund 7.
 
-This is the list of addons that this fork provides:
-* Add support  did:ada method
-* Add support for SECP256K1 signatures
-* In Memory wallet support for sidetree cardano:
-  * create did:ada
-  * update did:ada documment
-  * rotate keys
-  *  Note 1: DID documment are stored as metadata
-  *  Note 2: sidetree update and recovery keys were merged into one
+Take note that this project is in Beta phase and improving is underway. Testing and collaboration are welcomed!
 
-A DEMO was added to produce the following actions:
+This fork includes the following features:
+* Support for did:ada method operations
+* Support for SECP256K1 signatures needed by sidetree
+* In Memory wallet support for sidetree-cardano:
+  * Create did:ada
+  * Update did:ada documment
+  * Rotate keys
+  *  Note 1: DID document is stored as did metadata
+  *  Note 2: since recovery is not supported in Aries, sidetrees' update and recovery keys are merged into one
+
+A DEMO is included to produce the following actions:
 * Create did:ada and store in ledger and wallet
 * Ceate an out of band invitation to other agent
 * Establish connection between two agents

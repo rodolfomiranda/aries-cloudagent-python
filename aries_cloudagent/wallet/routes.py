@@ -169,7 +169,7 @@ class DIDCreateSchema(OpenAPISchema):
         required=False,
         default=DIDMethod.SOV.method_name,
         example=DIDMethod.SOV.method_name,
-        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name]),
+        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name, DIDMethod.ADA.method_name]),
     )
 
     options = fields.Nested(
