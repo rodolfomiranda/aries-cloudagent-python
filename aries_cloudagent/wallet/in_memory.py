@@ -169,8 +169,29 @@ class InMemoryWallet(BaseWallet):
         if not temp_keys:
             raise WalletError("Key rotation not in progress for DID: {}".format(did))
         verkey_enc = temp_keys[0]
-
         local_did = self.profile.local_dids[did]
+        
+        # if did:ADA post to sidetree
+        if DIDMethod.from_did(did) ==  DIDMethod.ADA:
+            metadata=local_did["metadata"].copy()
+            verkeyold = local_did["verkey"]
+            secretold = local_did["secret"]
+            xold = codecs.encode(codecs.decode(verkeyold[:64], 'hex'), 'base64').decode()[:43]
+            yold = codecs.encode(codecs.decode(verkeyold[64:], 'hex'), 'base64').decode()[:43]
+            dold = codecs.encode(codecs.decode(secretold, 'hex'), 'base64').decode()
+            
+            xnew = codecs.encode(codecs.decode(verkey_enc[:64], 'hex'), 'base64').decode()[:43]
+            ynew = codecs.encode(codecs.decode(verkey_enc[64:], 'hex'), 'base64').decode()[:43]
+
+            didsufix = did.split(":")[2]
+            
+            if metadata is None: metadata = {}
+            try:
+                subprocess.run(["node", "./aries_cloudagent/wallet/sidetree-cardano/rotate.js", didsufix, xold, yold, dold, xnew, ynew, metadata]).decode('utf-8')[:-1]
+            except subprocess.CalledProcessError as e:
+                print(e.output)
+
+        
 
         local_did.update(
             {
@@ -237,12 +258,13 @@ class InMemoryWallet(BaseWallet):
         elif method == DIDMethod.ADA:
             if did:
                 raise WalletError("Not allowed to set DID for DID method 'ada'")
-            # TODO move to file
+            
             x = codecs.encode(codecs.decode(verkey[:64], 'hex'), 'base64').decode()[:43]
             y = codecs.encode(codecs.decode(verkey[64:], 'hex'), 'base64').decode()[:43]
 
+            if metadata is None: metadata = {}
             try:
-                did = subprocess.check_output(["node", "create.js", x, y]).decode('utf-8')[:-1]
+                did = subprocess.check_output(["node", "./aries_cloudagent/wallet/sidetree-cardano/create.js", x, y, metadata]).decode('utf-8')[:-1]
             except subprocess.CalledProcessError as e:
                 print(e.output)
         else:

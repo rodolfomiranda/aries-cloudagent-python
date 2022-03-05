@@ -181,6 +181,8 @@ def sign_message(
         )
     elif key_type == KeyType.BLS12381G2:
         return sign_messages_bls12381g2(messages=messages, secret=secret)
+    elif key_type == KeyType.SECP256k1:
+        return sign_messages_secp256k1(messages=messages, secret=secret)
     else:
         raise WalletError(f"Unsupported key type: {key_type.key_type}")
 
@@ -198,6 +200,21 @@ def sign_message_ed25519(message: bytes, secret: bytes) -> bytes:
     """
     result = nacl.bindings.crypto_sign(message, secret)
     sig = result[: nacl.bindings.crypto_sign_BYTES]
+    return sig
+
+def sign_messages_secp256k1(message: bytes, secret: bytes) -> bytes:
+    """Sign message using a secp256k1 private signing key.
+
+    Args:
+        messages (bytes): The message to sign
+        secret (bytes): The private signing key
+
+    Returns:
+        bytes: The signature
+
+    """
+    sk = ecdsa.SigningKey.from_string(bytes.fromhex(secret), curve=ecdsa.SECP256k1)
+    sig = sk.sign(message)
     return sig
 
 
@@ -237,6 +254,13 @@ def verify_signed_message(
             )
         except BbsException as e:
             raise WalletError("Unable to verify message") from e
+    elif key_type == KeyType.SECP256k1:
+        try:
+            return verify_signed_message_secp256k1(
+                messages=messages, signature=signature, public_key=verkey
+            )
+        except BbsException as e:
+            raise WalletError("Unable to verify message") from e
     else:
         raise WalletError(f"Unsupported key type: {key_type.key_type}")
 
@@ -261,6 +285,28 @@ def verify_signed_message_ed25519(
     except nacl.exceptions.BadSignatureError:
         return False
     return True
+
+def verify_signed_message_secp256k1(
+    message: bytes, signature: bytes, verkey: bytes
+) -> bool:
+    """
+    Verify an ed25519 signed message according to a public verification key.
+
+    Args:
+        message: The message to verify
+        signature: The signature to verify
+        verkey: The verkey to use in verification
+
+    Returns:
+        True if verified, else False
+
+    """
+    try:
+        vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(verkey), curve=ecdsa.SECP256k1)
+        return vk.verify(signature, message)
+    except:
+        return False
+
 
 
 def add_pack_recipients(
