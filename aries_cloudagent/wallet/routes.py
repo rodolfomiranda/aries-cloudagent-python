@@ -494,6 +494,39 @@ async def wallet_set_did_endpoint(request: web.BaseRequest):
 
     return web.json_response({})
 
+@docs(
+    tags=["wallet"], summary="Update DID metadata and post to sidetree"
+)
+@request_schema(DIDEndpointWithTypeSchema)
+@response_schema(WalletModuleResponseSchema(), description="")
+async def wallet_update_did_metadata(request: web.BaseRequest):
+    """
+    Request handler for updating metadata for a DID.
+
+    Args:
+        request: aiohttp request object
+    """
+    context: AdminRequestContext = request["context"]
+    body = await request.json()
+    did = body["did"]
+    metadata = body.get("metadata")
+
+    async with context.session() as session:
+        wallet = session.inject_or(BaseWallet)
+        if not wallet:
+            raise web.HTTPForbidden(reason="No wallet available")
+
+        try:
+            await wallet.update_did_metadata(did, metadata)
+        except WalletNotFoundError as err:
+            raise web.HTTPNotFound(reason=err.roll_up) from err
+        except LedgerConfigError as err:
+            raise web.HTTPForbidden(reason=err.roll_up) from err
+        except (LedgerError, WalletError) as err:
+            raise web.HTTPBadRequest(reason=err.roll_up) from err
+
+    return web.json_response({})
+
 
 @docs(tags=["wallet"], summary="Query DID endpoint in wallet")
 @querystring_schema(DIDQueryStringSchema())
@@ -602,6 +635,7 @@ async def register(app: web.Application):
             web.get("/wallet/did/public", wallet_get_public_did, allow_head=False),
             web.post("/wallet/did/public", wallet_set_public_did),
             web.post("/wallet/set-did-endpoint", wallet_set_did_endpoint),
+            web.post("/wallet/update-did-metadata", wallet_update_did_metadata),
             web.get(
                 "/wallet/get-did-endpoint", wallet_get_did_endpoint, allow_head=False
             ),

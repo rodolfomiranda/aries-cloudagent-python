@@ -52,11 +52,6 @@
   
   
     // Create the request body ready to be posted in /operations of Sidetree API
-    const createRequest = await IonSdk.IonRequest.createCreateRequest({
-      recoveryKey: updateKey.publicJwk,
-      updateKey: updateKey.publicJwk,
-      document: didDocument
-    });
 
     const recoveryRequest = await IonSdk.IonRequest.createRecoverRequest({
         didSuffix: didSuffix,

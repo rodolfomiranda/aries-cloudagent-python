@@ -3,7 +3,10 @@
 import asyncio
 import codecs
 import subprocess
-from typing import List, Sequence, Tuple, Union
+import base64
+import json
+
+from typing import Dict, List, Sequence, Tuple, Union
 
 from ..core.in_memory import InMemoryProfile
 from ..did.did_key import DIDKey
@@ -186,8 +189,9 @@ class InMemoryWallet(BaseWallet):
             didsufix = did.split(":")[2]
             
             if metadata is None: metadata = {}
+            diddocbase64 = base64.encodebytes(json.dumps(metadata).encode())
             try:
-                subprocess.run(["node", "./aries_cloudagent/wallet/sidetree-cardano/rotate.js", didsufix, xold, yold, dold, xnew, ynew, metadata]).decode('utf-8')[:-1]
+                subprocess.run(["node", "./aries_cloudagent/wallet/sidetree-cardano/rotate.js", didsufix, xold, yold, dold, xnew, ynew, diddocbase64]).decode('utf-8')[:-1]
             except subprocess.CalledProcessError as e:
                 print(e.output)
 
@@ -204,6 +208,58 @@ class InMemoryWallet(BaseWallet):
         return DIDInfo(
             did=did,
             verkey=verkey_enc,
+            metadata=local_did["metadata"].copy(),
+            method=local_did["method"],
+            key_type=local_did["key_type"],
+        )
+    async def update_did_metadata(self, did: str, metadata: dict) -> None:
+        """
+        Apply temporary keypair as main for DID that wallet owns.
+
+        Args:
+            did: signing DID
+
+        Raises:
+            WalletNotFoundError: if wallet does not own DID
+            WalletError: if wallet has not started key rotation
+
+        """
+        if did not in self.profile.local_dids:
+            raise WalletNotFoundError("Wallet owns no such DID: {}".format(did))
+
+        local_did = self.profile.local_dids[did]
+        
+        # if did:ADA post to sidetree
+        if DIDMethod.from_did(did) ==  DIDMethod.ADA:
+            verkey = local_did["verkey"]
+            secret = local_did["secret"]
+            x = codecs.encode(codecs.decode(verkey[:64], 'hex'), 'base64').decode()[:43]
+            y = codecs.encode(codecs.decode(verkey[64:], 'hex'), 'base64').decode()[:43]
+            d = codecs.encode(codecs.decode(secret, 'hex'), 'base64').decode()
+
+            didsufix = did.split(":")[2]
+            
+            oldmetadata=local_did["metadata"].copy()
+            if oldmetadata is None: oldmetadata = {}
+            olddiddocbase64 = base64.encodebytes(json.dumps(oldmetadata).encode())
+            
+            if metadata is None: metadata = {}
+            diddocbase64 = base64.encodebytes(json.dumps(metadata).encode())
+            try:
+                subprocess.run(["node", "./aries_cloudagent/wallet/sidetree-cardano/update.js", didsufix, x, y, d, olddiddocbase64, diddocbase64]).decode('utf-8')[:-1]
+            except subprocess.CalledProcessError as e:
+                print(e.output)
+
+        
+
+        local_did.update(
+            {
+                "metadata": metadata
+            }
+        )
+        return DIDInfo(
+            did=did,
+            verkey=verkey,
             metadata=local_did["metadata"].copy(),
             method=local_did["method"],
             key_type=local_did["key_type"],
@@ -263,8 +319,9 @@ class InMemoryWallet(BaseWallet):
             y = codecs.encode(codecs.decode(verkey[64:], 'hex'), 'base64').decode()[:43]
 
             if metadata is None: metadata = {}
+            diddocbase64 = base64.encodebytes(json.dumps(metadata).encode())
             try:
-                did = subprocess.check_output(["node", "./aries_cloudagent/wallet/sidetree-cardano/create.js", x, y, metadata]).decode('utf-8')[:-1]
+                did = subprocess.check_output(["node", "./aries_cloudagent/wallet/sidetree-cardano/create.js", x, y, diddocbase64]).decode('utf-8')[:-1]
             except subprocess.CalledProcessError as e:
                 print(e.output)
         else:
