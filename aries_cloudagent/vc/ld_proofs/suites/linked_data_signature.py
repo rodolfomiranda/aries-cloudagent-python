@@ -14,6 +14,9 @@ from ..validation_result import ProofResult
 
 from .linked_data_proof import LinkedDataProof
 
+import logging
+LOGGER = logging.getLogger(__name__)
+
 
 class LinkedDataSignature(LinkedDataProof, metaclass=ABCMeta):
     """Linked Data Signature class."""

@@ -11,6 +11,9 @@ from .purposes.proof_purpose import ProofPurpose
 from .suites import _LinkedDataProof as LinkedDataProof
 from .validation_result import DocumentVerificationResult, ProofResult
 
+import logging
+LOGGER = logging.getLogger(__name__)
+
 
 class ProofSet:
     """Class for managing proof sets on a JSON-LD document."""
@@ -47,7 +50,7 @@ class ProofSet:
         # Shallow copy document to allow removal of existing proofs
         input = document.copy()
         input.pop("proof", None)
-
+        
         # create the new proof, suites MUST output a proof using security-v2 `@context`
         proof = await suite.create_proof(
             document=input, purpose=purpose, document_loader=document_loader

@@ -28,6 +28,7 @@ from ......vc.ld_proofs import (
     CredentialIssuancePurpose,
     DocumentLoader,
     Ed25519Signature2018,
+    EcdsaSecp256k1VerificationKey2019,
     LinkedDataProof,
     ProofPurpose,
     WalletKeyPair,
@@ -66,6 +67,8 @@ SUPPORTED_ISSUANCE_PROOF_PURPOSES = {
 SUPPORTED_ISSUANCE_SUITES = {Ed25519Signature2018}
 SIGNATURE_SUITE_KEY_TYPE_MAPPING = {Ed25519Signature2018: KeyType.ED25519}
 
+SUPPORTED_ISSUANCE_SUITES.add(EcdsaSecp256k1VerificationKey2019)
+SIGNATURE_SUITE_KEY_TYPE_MAPPING[EcdsaSecp256k1VerificationKey2019] = KeyType.SECP256k1
 
 # We only want to add bbs suites to supported if the module is installed
 if BbsBlsSignature2020.BBS_SUPPORTED:
@@ -309,6 +312,8 @@ class LDProofCredFormatHandler(V20CredFormatHandler):
 
         if did.startswith("did:key:"):
             return DIDKey.from_did(did).key_id
+        if did.startswith("did:ada:"):
+            return did + "#key-1"
         elif did.startswith("did:sov:"):
             # key-1 is what the resolver uses for key id
             return did + "#key-1"

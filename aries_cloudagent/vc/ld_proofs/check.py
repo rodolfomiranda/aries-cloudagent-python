@@ -2,10 +2,12 @@
 
 from typing import Sequence, Tuple, Union
 from pyld import jsonld
+import logging
 
 
 from .document_loader import DocumentLoaderMethod
 
+LOGGER = logging.getLogger(__name__)
 
 def diff_dict_keys(
     full: dict,
@@ -27,7 +29,7 @@ def diff_dict_keys(
     Returns:
         Sequence[str]: List of missing property names in with_missing
 
-    """
+    """    
 
     def _normalize(
         full: Union[dict, list], with_missing: Union[dict, list]
@@ -48,6 +50,7 @@ def diff_dict_keys(
     for key, value in full.items():
         key_in_with_missing = key
 
+
         # skip json-ld keywords
         if jsonld._is_keyword(key):
             continue
@@ -67,6 +70,8 @@ def diff_dict_keys(
                 doc,
                 {"documentLoader": document_loader},
             )
+            
+
 
             if len(expanded) > 0:
                 expanded = expanded[0]
@@ -131,8 +136,7 @@ def get_properties_without_context(
     if "verifiableCredential" in document:
         return []
 
-    document = document.copy()
-
+    document = document.copy()    
     # Removes unknown keys from object
     compact = jsonld.compact(
         document,
@@ -140,6 +144,9 @@ def get_properties_without_context(
         {"documentLoader": document_loader},
     )
 
+    # TODO FIX THAT COMPACT FOR DID:ADA
+    compact = document
+    
     missing = diff_dict_keys(
         document, compact, document_loader=document_loader, context=document["@context"]
     )

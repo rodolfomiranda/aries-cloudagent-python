@@ -191,7 +191,7 @@ class InMemoryWallet(BaseWallet):
             if metadata is None: metadata = {}
             diddocbase64 = base64.encodebytes(json.dumps(metadata).encode())
             try:
-                subprocess.run(["node", "./aries_cloudagent/wallet/sidetree-cardano/rotate.js", didsufix, xold, yold, dold, xnew, ynew, diddocbase64]).decode('utf-8')[:-1]
+                subprocess.run(["node", "./aries_cloudagent/wallet/sidetree-cardano/rotate.js", didsufix, xold, yold, dold, xnew, ynew, diddocbase64])
             except subprocess.CalledProcessError as e:
                 print(e.output)
 
@@ -319,6 +319,31 @@ class InMemoryWallet(BaseWallet):
             y = codecs.encode(codecs.decode(verkey[64:], 'hex'), 'base64').decode()[:43]
 
             if metadata is None: metadata = {}
+            
+            # TODO GENERATE KEY IN WALLET
+            metadata = {
+                "publicKeys": [
+                {
+                    "id": 'key-1',
+                    "type": 'EcdsaSecp256k1VerificationKey2019',
+                    "publicKeyJwk": {
+                        "kty": 'EC',
+                        "crv": 'secp256k1',
+                        "x": '_5O3aMu92QVDucDWaFiu6xaEnkByG2SYMspeIWCOSUU',
+                        "y": 'SJql7lhWHzoJY7fJvdxpOcCC2JMMnAnugYM9Gskm6q4'
+                        },
+                    "purposes": ['authentication']
+                }
+                ],
+                "services": [
+                {
+                    "id": 'domain-1',
+                    "type": 'LinkedDomains',
+                    "serviceEndpoint": 'https://foo.example.com',
+                }
+                ]
+            }
+            
             diddocbase64 = base64.encodebytes(json.dumps(metadata).encode())
             try:
                 did = subprocess.check_output(["node", "./aries_cloudagent/wallet/sidetree-cardano/create.js", x, y, diddocbase64]).decode('utf-8')[:-1]

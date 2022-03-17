@@ -12,7 +12,7 @@
   var docbase64 = process.argv[4];
 
   // Decode DID Document
-  const didDocument = JSON.parse(Buffer.from(docbase64, 'base64').toString());
+  // const didDocument = JSON.parse(Buffer.from(docbase64, 'base64').toString());
 
   // UpdateKey = RecoveryKey
   updateKey = {
@@ -23,6 +23,28 @@
       y: y_update
     }, 
   }
+  const didDocument = {
+    publicKeys: [
+    {
+        id: 'key-1',
+        type: 'EcdsaSecp256k1VerificationKey2019',
+        publicKeyJwk: {
+            kty: 'EC',
+            crv: 'secp256k1',
+            x: '_5O3aMu92QVDucDWaFiu6xaEnkByG2SYMspeIWCOSUU',
+            y: 'SJql7lhWHzoJY7fJvdxpOcCC2JMMnAnugYM9Gskm6q4'
+            },
+        purposes: ['authentication']
+    }
+    ],
+    services: [
+    {
+        id: 'domain-1',
+        type: 'LinkedDomains',
+        serviceEndpoint: 'https://foo.example.com',
+    }
+    ]
+}
 
 
   // Create the request body ready to be posted in /operations of Sidetree API

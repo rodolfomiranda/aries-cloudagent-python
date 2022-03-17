@@ -182,7 +182,7 @@ def sign_message(
     elif key_type == KeyType.BLS12381G2:
         return sign_messages_bls12381g2(messages=messages, secret=secret)
     elif key_type == KeyType.SECP256k1:
-        return sign_messages_secp256k1(messages=messages, secret=secret)
+        return sign_messages_secp256k1(message=messages[0], secret=secret)
     else:
         raise WalletError(f"Unsupported key type: {key_type.key_type}")
 

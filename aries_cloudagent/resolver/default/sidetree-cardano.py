@@ -46,7 +46,7 @@ class AdaDIDResolver(BaseDIDResolver):
                 if response.status == 200:
                     try:
                         # TODO BAD TRICK HERE
-                        # search all controller="" and change to id -> fix in new version of sidetre
+                        # search all controller="" and change to id -> fix in new version of sidetree
                         # parse @context and remove non string element -> not contemplated on pydid
                         # can subclass DIDDoccumentRoot from pydid
                         sidetree_doc = await response.json()

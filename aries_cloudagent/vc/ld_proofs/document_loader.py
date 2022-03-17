@@ -13,6 +13,8 @@ from ...core.profile import Profile
 from ...resolver.did_resolver import DIDResolver
 
 from .error import LinkedDataProofException
+import logging
+LOGGER = logging.getLogger(__name__)
 
 
 class DocumentLoader:
