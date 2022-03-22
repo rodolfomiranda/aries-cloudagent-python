@@ -8,7 +8,7 @@ import logging
 from flask import Flask, request
 
 def print_menu():       ## Your menu design here
-    print(30 * "-" , "MENU FABER" , 30 * "-")
+    print(30 * "-" , "MENU CATALYST SCHOOL" , 30 * "-")
     print("1. Create sidetree-cardano did:ada")
     print("2. Resolve DID")
     print("3. Create out-of-band invitation")

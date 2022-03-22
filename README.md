@@ -14,7 +14,7 @@ This development is part of my proposal [Interoperability as Growth Driver](http
 
 Take note that this project is in Beta phase and improving is underway. Testing and collaboration are welcomed!
 
-This fork includes the following features:
+**This fork includes the following features:**
 * Support for did:ada method operations
 * Support for SECP256K1 signatures needed by sidetree
 * In Memory wallet support for sidetree-cardano:
@@ -22,9 +22,9 @@ This fork includes the following features:
   * Update did:ada documment
   * Rotate keys
   *  Note 1: DID document is stored as did metadata
-  *  Note 2: since recovery is not supported in Aries, sidetrees' update and recovery keys are merged into one
+  *  Note 2: since recovery is not supported in Aries, _sidetree_ update and recovery keys are merged into one
 
-A DEMO is included to produce the following actions:
+**A DEMO is included to produce the following actions:**
 * Create did:ada and store in ledger and wallet
 * Ceate an out of band invitation to other agent
 * Establish connection between two agents
@@ -33,7 +33,22 @@ A DEMO is included to produce the following actions:
 * Request proof on did:ada
 * Issue a credential on did:ada
 
+**How to run the Demo:**
+Start Alice agent in one terminal:
+`python ./demo-sidetree-cardano/alice.py`
+In a second terminal start Faber agent:
+`python ./demo-sidetree-cardano/faber.py`
 
+From the agent's menu you'll be able to:
+* Create a did:ada (that will be publish by sidetree to Cardano blockchain)
+* Retrieve a DID document
+* Create an Out of Band invitation
+* Receive an Out of Band invitation and stablish a connection with the other agent
+* Send basic text messages between agents
+* Request a Credential
+* Issue and send the Credential
+* Get the Credential stored in the wallet
+  
 
 ## Overview
 
