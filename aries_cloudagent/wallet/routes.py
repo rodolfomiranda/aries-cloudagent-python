@@ -131,7 +131,7 @@ class DIDListQueryStringSchema(OpenAPISchema):
     method = fields.Str(
         required=False,
         example=DIDMethod.KEY.method_name,
-        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name, DIDMethod.ADA.method_name]),
+        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name, DIDMethod.ADA.method_name, DIDMethod.PRISM.method_name]),
         description="DID method to query for. e.g. sov to only fetch indy/sov DIDs",
     )
     key_type = fields.Str(
@@ -169,7 +169,7 @@ class DIDCreateSchema(OpenAPISchema):
         required=False,
         default=DIDMethod.SOV.method_name,
         example=DIDMethod.SOV.method_name,
-        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name, DIDMethod.ADA.method_name]),
+        validate=validate.OneOf([DIDMethod.KEY.method_name, DIDMethod.SOV.method_name, DIDMethod.ADA.method_name, DIDMethod.PRISM.method_name]),
     )
 
     options = fields.Nested(

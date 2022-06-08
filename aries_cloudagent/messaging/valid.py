@@ -275,7 +275,20 @@ class DIDAda(Regexp):
         """Initializer."""
 
         super().__init__(
-            DIDAda.PATTERN, error="Value {input} is not in  did:ada format"
+            DIDAda.PATTERN, error="Value {input} is not in did:ada format"
+        )
+
+class DIDPrism(Regexp):
+    """Validate value against did:prism specification."""
+
+    EXAMPLE = "did:prism:ffddssvxvxvxvxv"
+    PATTERN = re.compile(r"^(did:prism:)([a-zA-Z0-9%._-]*:)*[a-zA-Z0-9%._-]+$")
+
+    def __init__(self):
+        """Initializer."""
+
+        super().__init__(
+            DIDPrism.PATTERN, error="Value {input} is not in did:prism format"
         )
 
 

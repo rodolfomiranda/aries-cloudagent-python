@@ -5,6 +5,7 @@ import codecs
 import subprocess
 import base64
 import json
+import uuid
 
 from typing import Dict, List, Sequence, Tuple, Union
 
@@ -347,6 +348,24 @@ class InMemoryWallet(BaseWallet):
             diddocbase64 = base64.encodebytes(json.dumps(metadata).encode())
             try:
                 did = subprocess.check_output(["node", "./aries_cloudagent/wallet/sidetree-cardano/create.js", x, y, diddocbase64]).decode('utf-8')[:-1]
+            except subprocess.CalledProcessError as e:
+                print(e.output)
+        elif method == DIDMethod.PRISM:
+            if did:
+                raise WalletError("Not allowed to set DID for DID method 'prism'")
+            try:
+                didalias = str(uuid.uuid4())
+                didresp = subprocess.check_output(["java", "-jar" ,"/Users/rodo/Code/LosDemas/wal-cli/build/libs/wal-cli-1.0.1-SNAPSHOT-all.jar", "new-did", "acapy", didalias,"-i"]).decode('utf-8')[:-1]
+                didget = subprocess.check_output(["java", "-jar" ,"/Users/rodo/Code/LosDemas/wal-cli/build/libs/wal-cli-1.0.1-SNAPSHOT-all.jar", "show-did-data", "acapy", didalias]).decode('utf-8')[:-1]
+                metadata = json.loads(didget.split("\n",3)[3])
+                did = metadata["uriLongForm"]
+                for key_pair in metadata["keyPairs"]:
+                    if key_pair["keyId"] == "master0":
+                        secret = bytes(bytearray.fromhex(key_pair["privateKey"]))
+                        verkey = bytes(bytearray.fromhex(key_pair["publicKey"][2:]))
+                        verkey_enc = bytes_to_b58(verkey)
+                # TODO get seed from wal-lib (wallet mnemonic?)
+                
             except subprocess.CalledProcessError as e:
                 print(e.output)
         else:

@@ -314,12 +314,14 @@ class LDProofCredFormatHandler(V20CredFormatHandler):
             return DIDKey.from_did(did).key_id
         if did.startswith("did:ada:"):
             return did + "#key-1"
+        if did.startswith("did:prism:"):
+            return did+"#master0"
         elif did.startswith("did:sov:"):
             # key-1 is what the resolver uses for key id
             return did + "#key-1"
         else:
             raise V20CredFormatError(
-                f"Unable to get retrieve verification method for did {did}"
+                f"Unable to retrieve verification method for did {did}"
             )
 
     def _get_proof_purpose(

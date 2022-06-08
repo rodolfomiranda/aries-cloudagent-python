@@ -213,7 +213,7 @@ def sign_messages_secp256k1(message: bytes, secret: bytes) -> bytes:
         bytes: The signature
 
     """
-    sk = ecdsa.SigningKey.from_string(bytes.fromhex(secret), curve=ecdsa.SECP256k1)
+    sk = ecdsa.SigningKey.from_string(bytearray(secret), curve=ecdsa.SECP256k1)
     sig = sk.sign(message)
     return sig
 
@@ -255,9 +255,11 @@ def verify_signed_message(
         except BbsException as e:
             raise WalletError("Unable to verify message") from e
     elif key_type == KeyType.SECP256k1:
+        if len(messages) > 1:
+            raise WalletError("ed25519 can only verify a single message")
         try:
             return verify_signed_message_secp256k1(
-                messages=messages, signature=signature, public_key=verkey
+                message=messages[0], signature=signature, verkey=verkey
             )
         except BbsException as e:
             raise WalletError("Unable to verify message") from e
@@ -302,7 +304,7 @@ def verify_signed_message_secp256k1(
 
     """
     try:
-        vk = ecdsa.VerifyingKey.from_string(bytes.fromhex(verkey), curve=ecdsa.SECP256k1)
+        vk = ecdsa.VerifyingKey.from_string(verkey, curve=ecdsa.SECP256k1)
         return vk.verify(signature, message)
     except:
         return False

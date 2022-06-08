@@ -43,3 +43,9 @@ async def setup(context: InjectionContext):
     ).provide(context.settings, context.injector)
     await ada_resolver.setup(context)
     registry.register(ada_resolver)
+
+    prism_resolver = ClassProvider(
+        "aries_cloudagent.resolver.default.prism.PrismDIDResolver"
+    ).provide(context.settings, context.injector)
+    await prism_resolver.setup(context)
+    registry.register(prism_resolver)

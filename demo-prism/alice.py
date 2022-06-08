@@ -10,7 +10,7 @@ from flask import Flask, request
 
 def print_menu():       ## Your menu design here
     print(30 * "-" , "MENU ALICE" , 30 * "-")
-    print("1. Create sidetree-cardano did:ada")
+    print("1. Create did:prism")
     print("2. Resolve DID")
     print("3. Create out-of-band invitation")
     print("4. Receive out-of-band invitation")
@@ -49,8 +49,10 @@ def issue_credential():
             print("Credential received")
         if request.json['state'] == "request-received":
             print("Credential request received")
+        if request.json['state'] == "done":
+            global cred_id_stored
+            cred_id_stored = request.json['cred_issue']["@id"]
         return "OK"
-
 @app.route('/webhook/topic/issue_credential_v2_0_ld_proof/', methods=['POST'])
 def issue_credential_proof():
     if request.method == 'POST':
@@ -114,17 +116,18 @@ while loop:
     print_menu()
     choice = int(input("Enter your choice [1-8]: "))
      
-    if choice==1:     # CREATE DID:ADA
-        print("Creating did:ada")
+
+    if choice==1:     # CREATE DID:PRISM
+        print("Creating did:prism")
         resp = requests.post(api_url + "/wallet/did/create", json = {
-                "method": "ada",
+                "method": "prism",
                 "options": {
                 "key_type": "secp256k1"
                 }
             })
         did = resp.json()["result"]["did"]
         print("Alice DID: " + did)
-        print("This DID is already posted to sidetree-cardano node and stored in wallet")
+        print("This DID is already posted to prism node and stored in wallet")
     elif choice==2:     # RESOLVE DID
         did_to_resolve = input("DID:")
         try:
@@ -168,6 +171,7 @@ while loop:
                         "https://w3id.org/citizenship/v1"
                         ],
                             "credentialSubject": {
+                            "id": did,
                             "familyName": "Miranda",
                             "gender": "female",
                             "givenName": "Alice",
@@ -197,8 +201,8 @@ while loop:
             )
     elif choice==7:     # GET CREDENTIAL FROM WALLET
         try:
-            print(cred_ex_id)
-            stored_cred = requests.get(api_url + "/credential/w3c/"+ cred_ex_id )
+            print(cred_id_stored)
+            stored_cred = requests.get(api_url + "/credential/w3c/"+ cred_id_stored )
             print("Credential:",resp.json())
         except:
             print("Credential not found")

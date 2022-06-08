@@ -33,6 +33,11 @@ class DIDMethod(Enum):
         supported_key_types=[KeyType.SECP256k1],
         supports_rotation=True,
     )
+    PRISM = DIDMethodSpec(
+        method_name="prism",
+        supported_key_types=[KeyType.SECP256k1],
+        supports_rotation=True,
+    )
 
     @property
     def method_name(self) -> str:

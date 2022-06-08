@@ -144,7 +144,7 @@ def get_properties_without_context(
         {"documentLoader": document_loader},
     )
 
-    # TODO FIX THAT COMPACT FOR DID:ADA
+    # TODO FIX THAT COMPACT FOR DID:ADA AND DID:PRISM
     compact = document
     
     missing = diff_dict_keys(
