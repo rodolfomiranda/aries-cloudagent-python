@@ -355,10 +355,12 @@ class InMemoryWallet(BaseWallet):
                 raise WalletError("Not allowed to set DID for DID method 'prism'")
             try:
                 didalias = str(uuid.uuid4())
-                didresp = subprocess.check_output(["java", "-jar" ,"/Users/rodo/Code/LosDemas/wal-cli/build/libs/wal-cli-1.0.1-SNAPSHOT-all.jar", "new-did", "acapy", didalias,"-i"]).decode('utf-8')[:-1]
-                didget = subprocess.check_output(["java", "-jar" ,"/Users/rodo/Code/LosDemas/wal-cli/build/libs/wal-cli-1.0.1-SNAPSHOT-all.jar", "show-did-data", "acapy", didalias]).decode('utf-8')[:-1]
+                didresp = subprocess.check_output(["java", "-jar" ,"./aries_cloudagent/wallet/prism/wal-cli-1.0.1-SNAPSHOT-all.jar", "new-did", "acapy", didalias,"-i"]).decode('utf-8')[:-1]
+                subprocess.Popen(["java", "-jar" ,"./aries_cloudagent/wallet/prism/wal-cli-1.0.1-SNAPSHOT-all.jar", "publish-did", "acapy", didalias])
+                didget = subprocess.check_output(["java", "-jar" ,"./aries_cloudagent/wallet/prism/wal-cli-1.0.1-SNAPSHOT-all.jar", "show-did-data", "acapy", didalias]).decode('utf-8')[:-1]
                 metadata = json.loads(didget.split("\n",3)[3])
-                did = metadata["uriLongForm"]
+                #did = metadata["uriLongForm"]
+                did = metadata["uriCanonical"]
                 for key_pair in metadata["keyPairs"]:
                     if key_pair["keyId"] == "master0":
                         secret = bytes(bytearray.fromhex(key_pair["privateKey"]))

@@ -39,7 +39,7 @@ class PrismDIDResolver(BaseDIDResolver):
     async def _resolve(self, profile: Profile, did: str) -> dict:
         """Resolve did:prism DIDs."""
         #  Validate DIDDoc with pyDID
-        didget = subprocess.check_output(["java", "-jar" ,"/Users/rodo/Code/LosDemas/wal-cli/build/libs/wal-cli-1.0.1-SNAPSHOT-all.jar", "resolve-prism-did", did, "-w3c"]).decode('utf-8')[:-1]
+        didget = subprocess.check_output(["java", "-jar" ,"./aries_cloudagent/wallet/prism/wal-cli-1.0.1-SNAPSHOT-all.jar", "resolve-prism-did", did, "-w3c"]).decode('utf-8')[:-1]
         if didget.split("\n",2)[1] == "DID document":
             try:
                 did_doc = DIDDocument.from_json(didget.split("\n",2)[2])

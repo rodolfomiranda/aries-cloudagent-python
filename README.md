@@ -9,45 +9,61 @@
 > An easy to use Aries agent for building SSI services using any language that supports sending/receiving HTTP requests.
 
 ## About this fork of ACA-Py
-The purpose of this fork is to adapt ACA-Py to work with sidetree-cardano methods.
-This development is part of my proposal [Interoperability as Growth Driver](https://cardano.ideascale.com/a/dtd/Interoperability-as-growth-driver/368705-48088) submitted to Project Catalyst Fund 6  that finally  **got funded**. Thanks for voting!!! See the [list](https://github.com/rodolfomiranda/sidetree-cardano/wiki/Project-Catalyst-Proposals) of my new proposals for Fund 7.
+The purpose of this fork is to adapt ACA-Py to work with ATALA prism and sidetree-cardano DID methods, `did:prism` and `did:ada` respectively.
+This development is part of Catalyst funded proposals [Interoperability as Growth Driver](https://cardano.ideascale.com/a/dtd/Interoperability-as-growth-driver/368705-48088) and [
+Hyperledger-Prism Interoperability](https://app.ideascale.com/t/UM5UZBqoh). 
 
 Take note that this project is in Beta phase and improving is underway. Testing and collaboration are welcomed!
 
 **This fork includes the following features:**
-* Support for did:ada method operations
-* Support for SECP256K1 signatures needed by sidetree
-* In Memory wallet support for sidetree-cardano:
-  * Create did:ada
-  * Update did:ada documment
-  * Rotate keys
-  *  Note 1: DID document is stored as did metadata
+* Support for did:prism method operations (powered by [WAL-CLI](https://github.com/roots-id/wal-cli))
+* Support for did:ada method operations (powered by [sidetree-cardano](https://github.com/rodolfomiranda/sidetree-cardano))
+* Support for SECP256K1 signatures
+* In Memory wallet support for:
+  * Create `did:prism` and `did:ada` 
+  * Resolve `did:prism` and `did:ada` 
+  * Update `did:ada` documment
+  * Rotate `did:ada` keys (pending deveopment to rotate `did:prism`)
+  *  Note 1: DID document for `did:ada` is stored as did metadata
   *  Note 2: since recovery is not supported in Aries, _sidetree_ update and recovery keys are merged into one
 
-**A DEMO is included to produce the following actions:**
-* Create did:ada and store in ledger and wallet
+**DEMO ATALA PRISM**
+
+Start Alice agent in one terminal:
+
+`python ./demo-prism/alice.py`
+
+In a second terminal start Faber agent:
+
+`python ./demo-prism/faber.py`
+
+From the agent's menu you'll be able to:
+* Create `did:prism` and store in ledger and wallet
 * Ceate an out of band invitation to other agent
 * Establish connection between two agents
 * Basic messaging between agents
-* Request a credential on did:ada
-* Request proof on did:ada
-* Issue a credential on did:ada
+* Request a credential with issuer and subject are `did:prism`
+* Issue a signed credential with `did-prism` keys
+* Validate credential proof based on public `did:prism` reseolved on ledger
 
-**How to run the Demo:**
+**DEMO SIDETREE-CARDANO**
+
 Start Alice agent in one terminal:
+
 `python ./demo-sidetree-cardano/alice.py`
+
 In a second terminal start Faber agent:
+
 `python ./demo-sidetree-cardano/faber.py`
 
 From the agent's menu you'll be able to:
-* Create a did:ada (that will be publish by sidetree to Cardano blockchain)
-* Retrieve a DID document
-* Create an Out of Band invitation
-* Receive an Out of Band invitation and stablish a connection with the other agent
-* Send basic text messages between agents
-* Request a Credential
-* Issue and send the Credential
-* Get the Credential stored in the wallet
+* Create `did:ada` and store in ledger and wallet
+* Ceate an out of band invitation to other agent
+* Establish connection between two agents
+* Basic messaging between agents
+* Request a credential with issuer and subject are `did:ada`
+* Issue a signed credential with `did-ada` keys
+* Validate credential proof based on public `did:ada` reseolved on ledger
   
 
 ## Overview

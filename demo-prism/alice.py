@@ -16,7 +16,7 @@ def print_menu():       ## Your menu design here
     print("4. Receive out-of-band invitation")
     print("5. Send txt message")
     print("6. Request credential")
-    print("7. Get credential stored on wallet")
+    print("7. Get credentials stored on wallet")
     print("8. Exit")
     print(67 * "-")
     
@@ -38,6 +38,8 @@ def connections():
 def basicmessages():
     if request.method == 'POST':
         print("Message received: ", request.json["content"])
+        global faber_did
+        faber_did = request.json["content"]
         return "OK"
     
 @app.route('/webhook/topic/issue_credential_v2_0/', methods=['POST'])
@@ -158,7 +160,7 @@ while loop:
         })
         # print(resp.json())
     elif choice==6:     # REQUEST CREDENTIAL
-        issuer_did = input("DID from Faber: ")
+        #faber_did = input("DID from Faber: ")
         resp = requests.post(api_url + "/issue-credential-2.0/send-request", json = {
                 "auto_remove": True,
                 "comment": "Requesting a Faber Credential",
@@ -183,7 +185,7 @@ while loop:
                         "description": "Cardano Catalyst example",
                         "identifier": "83627465",
                         "issuanceDate": "2019-12-03T12:19:52Z",
-                        "issuer": issuer_did,
+                        "issuer": faber_did,
                         "name": "Permanent Resident Card",
                         "type": [
                         "VerifiableCredential",
@@ -199,11 +201,10 @@ while loop:
                 "trace": False
                 }
             )
-    elif choice==7:     # GET CREDENTIAL FROM WALLET
+    elif choice==7:     # GET CREDENTIALS
         try:
-            print(cred_id_stored)
-            stored_cred = requests.get(api_url + "/credential/w3c/"+ cred_id_stored )
-            print("Credential:",resp.json())
+            stored_cred = requests.post(api_url + "/credentials/w3c", json = {})
+            print("Credentials:",stored_cred.json())
         except:
             print("Credential not found")
     elif choice==8:

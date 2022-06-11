@@ -16,7 +16,7 @@ def print_menu():       ## Your menu design here
     print("4. Receive out-of-band invitation")
     print("5. Send txt message")
     print("6. Request credential")
-    print("7. Get credential stored on wallet")
+    print("7. Get credentials stored on wallet")
     print("8. Exit")
     print(67 * "-")
     
@@ -197,9 +197,8 @@ while loop:
             )
     elif choice==7:     # GET CREDENTIAL FROM WALLET
         try:
-            print(cred_ex_id)
-            stored_cred = requests.get(api_url + "/credential/w3c/"+ cred_ex_id )
-            print("Credential:",resp.json())
+            stored_cred = requests.post(api_url + "/credential/w3c", json = {} )
+            print("Credentials:",resp.json())
         except:
             print("Credential not found")
     elif choice==8:

@@ -14,7 +14,8 @@ def print_menu():       ## Your menu design here
     print("3. Create out-of-band invitation")
     print("4. Receive out-of-band invitation")
     print("5. Send txt message")
-    print("6. Exit")
+    print("6. Send my prism:did")
+    print("7. Exit")
     print(67 * "-")
     
 app = Flask(__name__)
@@ -100,7 +101,7 @@ api_url = "http://localhost:8021"
   
 while loop:
     print_menu()
-    choice = int(input("Enter your choice [1-6]: "))
+    choice = int(input("Enter your choice [1-7]: "))
      
     if choice==1:     # CREATE DID:PRISM
         print("Creating did:prism")
@@ -112,7 +113,7 @@ while loop:
             })
         did = resp.json()["result"]["did"]
         print("Faber DID: " + did)
-        print("This DID is already posted to sidetree-cardano node and stored in wallet")
+        print("This DID is already posted to prism node and stored in wallet")
     elif choice==2:     # RESOLVE DID
         did_to_resolve = input("DID:")
         try:
@@ -143,7 +144,11 @@ while loop:
             "content": txtmsg 
         })
         # print(resp.json())
-    elif choice==6:
+    elif choice==6:     # # SEND DID
+        resp = requests.post(api_url + "/connections/" + connection_id + "/send-message", json = {
+            "content": did 
+        })
+    elif choice==7:
         acapy_thread.join(1)
         if acapy_thread.is_alive():
              print('Stoping agent')
